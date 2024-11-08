@@ -1,0 +1,14 @@
+training:
+  learning_rate: 0.002
+  use_lr_scheduler: true
+  lr_step_size: 100
+  epochs: 400
+  batch_size: 200
+
+model_params:
+  prior_alpha: 1.
+  dropout: 0.
+  hidden_size: 200
+  embedding_dim: 200
+  gamma1: 0.01
+  gamma2: 0.0001

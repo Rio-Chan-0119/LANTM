@@ -34,8 +34,8 @@ To calculate $C_V$, please:
 1. Install java.
 
     `sudo apt install openjdk-11-jdk`
-2. Download the [java jar](https://hobbitdata.informatik.uni-leipzig.de/homes/mroeder/palmetto/palmetto-0.1.0-jar-with-dependencies.jar) to `./LANTM/palmetto`. It is developed by [palmetto](https://github.com/dice-group/Palmetto).
-3. Download and extract [preprocessed Wikipedia articles](https://hobbitdata.informatik.uni-leipzig.de/homes/mroeder/palmetto/Wikipedia_bd.zip) to `./LANTM/palmetto/wikipedia` as the reference corpus.
+2. Download the [java jar](https://hobbitdata.informatik.uni-leipzig.de/homes/mroeder/palmetto/palmetto-0.1.0-jar-with-dependencies.jar) to `./palmetto`. It is developed by [palmetto](https://github.com/dice-group/Palmetto).
+3. Download and extract [preprocessed Wikipedia articles](https://hobbitdata.informatik.uni-leipzig.de/homes/mroeder/palmetto/Wikipedia_bd.zip) to `./palmetto/wikipedia` as the reference corpus.
 4. Perform evaluation using
 
    ```shell

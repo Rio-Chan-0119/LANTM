@@ -14,7 +14,7 @@ Train LANTM+ECRTM on 20NG with K=50 by default arguments.
 ```shell
 python main.py --mode "train"
 ```
-On completing this, there will be 4 new files under `output/20NG/LANTM+ECRTM/config1`:
+On completing this, there will be 4 new files under `output/20NG/LANTM_ECRTM/config1`:
 - `label_topic_mat.npy`: the Numpy ndarray file of $\boldsymbol{\lambda}$
 - `param.pt`: the trained parameters of LANTM+ECRTM
 - `topic_word_dist.npy`: the Numpy ndarray file of $\boldsymbol{\beta}$
@@ -28,9 +28,9 @@ The evaluation depends on `output/20NG/LANTM+ECRTM/config1/param.pt`.
 python main.py --mode "eval"
 ```
 
-By default, our provided code will not calculate C_V. However,
+By default, our provided code will not calculate $C_V$. However,
 we provide the code to calculate it if the user is ready to [use palmetto as java program](https://github.com/dice-group/Palmetto/wiki/How-Palmetto-can-be-used#as-java-program).
-To calculate C_V, please:
+To calculate $C_V$, please:
 1. Install java.
 
     `sudo apt install openjdk-11-jdk`

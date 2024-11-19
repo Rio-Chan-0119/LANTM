@@ -14,7 +14,17 @@ def get_topic_diversity(topic_word, num_topic_words=25):
     return td
 
 
-def get_palmetto_topic_coherence(topic_words, output_prefix, palmetto_prefix="."):
+def get_palmetto_topic_coherence(topic_words, output_prefix, coherence_types=("C_V",), palmetto_prefix="."):
+    """
+    calculate different types of TC
+    coherence_types may be str, or tuple of str
+
+    :param topic_words: like [["a", "b"], ["c", "d"]]
+    :param output_prefix:
+    :param coherence_types: str (like "NPMI") or tuple of str (like ("C_V", "NPMI"))
+    :param palmetto_prefix:
+    :return: dict, indexed by str provided in coherence_types
+    """
     num_topics = len(topic_words)
 
     temp_file_name = os.path.join(output_prefix, "topics.temp")
@@ -46,8 +56,10 @@ def get_palmetto_topic_coherence(topic_words, output_prefix, palmetto_prefix="."
         avg_tc = sum(tc_lst) / len(tc_lst)
         result_dict[coherence_type] = [avg_tc, tc_lst]
 
-    coherence_types = ["C_V",]     # may add "NPMI" here
     result_dict = {}
+
+    if type(coherence_types) is "str":
+        coherence_types = (coherence_types,)
 
     threads = []
     for ct in coherence_types:
@@ -59,8 +71,10 @@ def get_palmetto_topic_coherence(topic_words, output_prefix, palmetto_prefix="."
 
     os.remove(temp_file_name)
 
-    # return overall C_V and C_V per topic
-    return result_dict["C_V"][0], result_dict["C_V"][1]
+    # {"C_V": [avg_tc, tc_per_topic], } by default
+    # avg_tc is float,
+    # while tc_per_topic is list of float
+    return result_dict
 
 
 def get_purity(labels_true, labels_pred):
@@ -74,8 +88,4 @@ def get_adjusted_rand_index(labels_true, labels_pred):
 
 def get_normalized_mutual_info(labels_true, labels_pred):
     return normalized_mutual_info_score(labels_true, labels_pred)
-
-
-def get_f1_score(labels_true, labels_pred):
-    return f1_score(labels_true, labels_pred, average="macro")
 

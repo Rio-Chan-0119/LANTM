@@ -4,7 +4,7 @@ import argparse
 from Runner import Runner
 
 from TextData import TextData
-import file_utils
+import utils
 
 
 def parse_args():
@@ -26,7 +26,7 @@ def main():
     params = {"exp_settings": vars(args)}
 
     output_prefix = f"output/{args.dataset}/{args.model}/config{args.config_id}"
-    file_utils.make_dir(output_prefix)
+    utils.make_dir(output_prefix)
     params["exp_settings"]["output_prefix"] = output_prefix
 
     config_path = f"configs/{args.model}/{args.dataset}_config{args.config_id}.yaml"
@@ -70,7 +70,7 @@ def main():
 
     runner = Runner(params)
     if args.mode == "train":
-        file_utils.clear_folder(output_prefix)
+        utils.clear_folder(output_prefix)
         runner.train()
     elif args.mode == "eval":
         runner.eval()

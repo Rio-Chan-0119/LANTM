@@ -6,7 +6,7 @@ from torch.distributions.categorical import Categorical
 
 from models.LANTM_ECRTM import LANTM_ECRTM
 from models.LANTM_ETM import LANTM_ETM
-import file_utils
+import utils
 
 
 class Runner(object):
@@ -88,15 +88,15 @@ class Runner(object):
         np.save(f"{output_prefix}/topic_word_dist.npy", topic_word_dist)
 
         vocab = self.data_handler.vocab
-        topic_words = file_utils.get_topic_word_str(topic_word_dist, vocab,
-                                                    num_top_words=self.exp_settings["num_top_words"])
+        topic_words = utils.get_topic_word_str(topic_word_dist, vocab,
+                                               num_top_words=self.exp_settings["num_top_words"])
         topic_word_path = f"{output_prefix}/topic_words.txt"
-        file_utils.save_topic_word_str(topic_words, topic_word_path)
+        utils.save_topic_word_str(topic_words, topic_word_path)
 
     def eval(self):
         output_prefix = self.output_prefix
         param_file_name = f"{output_prefix}/param.pt"
-        if file_utils.file_exists(param_file_name):
+        if utils.file_exists(param_file_name):
             self.model.load_state_dict(torch.load(param_file_name))
         else:
             print("Model is not trained.")
@@ -130,14 +130,14 @@ class Runner(object):
         topic_word_dist = self.model.get_topic_word_dist()
         td = metrics.get_topic_diversity(topic_word_dist)
 
-        # !!!
-        # # calculate TC with palmetto
+        # calculate TC with palmetto
         if self.exp_settings["calculate_CV"] is True:
             vocab = self.data_handler.vocab
-            topic_words = file_utils.get_topic_word_str(topic_word_dist, vocab,
-                                                        num_top_words=self.exp_settings["num_top_words"])
-            c_v, c_v_lst = metrics.get_palmetto_topic_coherence(topic_words, output_prefix,
-                                                                palmetto_prefix=".")
+            topic_words = utils.get_topic_word_str(topic_word_dist, vocab,
+                                                   num_top_words=self.exp_settings["num_top_words"])
+            tc_info = metrics.get_palmetto_topic_coherence(topic_words, output_prefix,
+                                                           palmetto_prefix=".")
+            c_v, c_v_lst = tc_info["C_V"]
         else:
             c_v = None
 

@@ -107,22 +107,22 @@ class LANTM_ETM(nn.Module):
     def get_topic_word_dist(self):
         return self._get_beta().detach().cpu().numpy()
 
-    def get_label_topic_dist(self):
-        label_topic_dist = self._get_label_topic_dist()[0]
-        return label_topic_dist.detach().cpu().numpy()
+    def get_label_topic_mat(self):
+        label_topic_mat = self._get_label_topic_mat()[0]
+        return label_topic_mat.detach().cpu().numpy()
 
     def _get_beta(self):
         beta = self.topic_embeddings @ self.word_embeddings.T
         return beta
 
-    def _get_label_topic_dist(self):
+    def _get_label_topic_mat(self):
         logits = -(self.label_embeddings @ self.topic_embeddings.T)
         cost = (1 + logits.exp()).log()     # Softplus
         a = self.label_dist
         b = torch.ones((self.num_topics,), device=a.device) / self.num_topics
         plan, sinkhorn_distance = self._optimal_transport(a, b, cost)
-        label_topic_dist = plan * self.num_topics
-        return label_topic_dist, sinkhorn_distance
+        label_topic_mat = plan * self.num_topics
+        return label_topic_mat, sinkhorn_distance
 
     def _reparameterize(self, mu, logvar):
         std = torch.exp(0.5 * logvar) if self.training else torch.zeros_like(logvar)
@@ -132,8 +132,8 @@ class LANTM_ETM(nn.Module):
     def _encode(self, bows, labels):
         labels_onehot = F.one_hot(labels, num_classes=self.num_classes).to(torch.float)
 
-        label_topic_dist, sinkhorn_distance = self._get_label_topic_dist()
-        topic_masks_per_doc = labels_onehot @ label_topic_dist + 1e-20     # avoid overflow
+        label_topic_mat, sinkhorn_distance = self._get_label_topic_mat()
+        topic_masks_per_doc = labels_onehot @ label_topic_mat + 1e-20     # avoid overflow
 
         h1 = F.softplus(self.fc11(bows))
         h1 = F.softplus(self.fc12(h1))
@@ -144,7 +144,7 @@ class LANTM_ETM(nn.Module):
         theta = F.softmax(z, dim=1)
         kld_per_doc = self._compute_kl_divergence_per_doc(mu, logvar)
 
-        return theta, kld_per_doc, label_topic_dist, sinkhorn_distance
+        return theta, kld_per_doc, label_topic_mat, sinkhorn_distance
 
     # We do not perform mean reduction
     # for the convenience of computing the predicted labels
